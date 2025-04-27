@@ -1,5 +1,5 @@
 import torch
-from torchvision import transforms, datasets
+from torchvision import transforms
 from sklearn.metrics import confusion_matrix
 from pathlib import Path
 import random
@@ -8,31 +8,77 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 from typing import List
-from .paths import models_dir, results_filename
+from .paths import models_dir, results_filename, train_dir
 from .predictions import predict
 import seaborn as sns
 
-def plot_transform(dataset: datasets,
+
+def plot_random_images(path: str = train_dir, n: int = 10, show_shape: bool = False, 
+                       img_format: str = 'jpg', fig_width: int = 8):
+    '''
+    Plots random images from directory.
+    
+    Args:
+        path (str): Image directory path.
+        n (int): Number of images plot (max 60).
+        show_shape (bool): Display image shape (displayed on title).
+        img_format (str): Image format type e.g. "jpg" or "png".
+        fig_width (int): Width of the entire figure.
+    
+    '''
+    
+    if n > 60:
+        n=60
+        print("Can't plot more imaages than 60.\nPlotting 60 images.\n")
+    
+    
+    cols = 5 if n > 19 else 4 if n > 10 else 3 if n > 4 else 2 if n > 1 else 1
+    rows = int(np.ceil(n/cols))
+    
+    list_of_img_paths = list(Path(path).glob(f'*/*.{img_format}'))
+    random_img_path = random.sample(list_of_img_paths, rows*cols)
+    
+    fig, ax = plt.subplots(nrows=rows, ncols=cols)
+    fig.set_figwidth(fig_width)
+    fig.set_figheight(fig_width * rows / cols)
+    ax = np.array(ax).flatten()
+    
+    for i, img_path in enumerate(random_img_path):
+        img = Image.open(img_path)
+        img_arr = np.asarray(img)
+        
+        title = f'Label: {img_path.parent.stem}'
+        if show_shape:
+            title += f' | shape: {img_arr.shape}'
+        
+        ax[i].imshow(img_arr)
+        ax[i].set(xticks=[], yticks=[])
+        ax[i].set_title(title)
+
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_transform(dataset: torch.utils.data.Dataset,
                    transform: transforms.Compose or List[transforms.Compose],
                    n: int = 10,
                    fig_width: int = 10,
-                   show_img_shapes: bool = True,
-                   img_format: str = 'jpg'):
+                   show_img_shapes: bool = True):
     """
     Plots original and transformed versions of random images from a dataset.
 
     Args:
-        dataset (dataset): Images dataset.
+        dataset (torch.utils.data.Dataset): Images dataset.
         transform (Compose or list of Compose): Transformations to apply.
         n (int): Number of images to display (max 10).
         fig_width (int): Width of the plot.
         show_img_shapes (bool): Whether to display image shapes.
-        img_format (str): Image format type e.g. "jpg" or "png"
 
     Raises:
         TypeError: If `transform` has an invalid type.
     """
 
+    # check transform type
     if type(transform) is transforms.Compose:
         transform = [transform]
 
@@ -43,14 +89,16 @@ def plot_transform(dataset: datasets,
          raise TypeError(
             f'Expected transform to be torchvision.transforms.Compose or List[...] but got {type(transform)}'
          )
+         
 
-    
+    # Check if number of plotting images is up to 10
     if n > 10:
         n = 10
         print("Can\'t display more than 10 images. Showing 10.")
         
-    list_of_images = [path for (path, label) in dataset.imgs]
-    random_images = random.choices(list_of_images, k=n)
+        
+    # List of images indexes
+    random_images_index = random.sample(range(len(dataset)), k=n)
 
     nrows = n
     ncols = len(transform)+1
@@ -59,23 +107,31 @@ def plot_transform(dataset: datasets,
     fig.set_figwidth(fig_width)
     fig.set_figheight(fig_width * nrows / ncols)
     
-    for i, img_path in enumerate(random_images):
+    # Set ax to 2D array - when want to plot 1 image only.
+    if nrows == 1:
+        ax = ax.reshape(1, -1)
+    
+    
+    # Plotting original and transformed images
+    for i, img_index in enumerate(random_images_index):
         
-        img = Image.open(img_path)
+        # Original Image
+        img = Image.open(dataset.paths[img_index])
         img_arr = np.asarray(img)
-        label = Path(img_path).parent.stem
+        label = Path(dataset.paths[img_index]).parent.stem
         
-        ax[i, 0].imshow(img_arr)
+        ax[i, 0].imshow(img)
         ax[i, 0].set(xticks=[], yticks=[])
         if show_img_shapes:
             ax[i, 0].set_xlabel(list(img_arr.shape), fontsize=10)
         ax[i, 0].set_ylabel(label, fontsize=16)
         ax[0, 0].set_title('Original', fontsize=16)
 
-        
+        # Transformed image
         for j, t in enumerate(transform):
+            img = dataset.load_image(img_index)
             img_trans = t(img)
-            ax[i, j+1].imshow(img_trans.permute(1, 2, 0))
+            ax[i, j+1].imshow(img_trans.permute(1, 2, 0), cmap='gray_r') # plot images that have 1 color channel in gray
             ax[i, j+1].set(xticks=[], yticks=[])
             if show_img_shapes:
                 ax[i, j+1].set_xlabel(list(img_trans.shape), fontsize=10)

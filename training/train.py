@@ -6,7 +6,7 @@ Main script to train a TinyVGG model on a custom dataset using PyTorch.
 
 import torch
 from time import time
-from . import data_setup, model_builder, engine, transformations, utils, path_file
+from . import data_setup, model_builder, engine, image_transforms, utils, paths
 import argparse
 
 def main():
@@ -25,16 +25,16 @@ def main():
     args = parser.parse_args()
 
     # set train and test directiries
-    train_dir = path_file.train_dir
-    test_dir = path_file.test_dir
+    train_dir = paths.train_dir
+    test_dir = paths.test_dir
     
     # device agnostic code
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
     # define transformation
     try:
-        transform = getattr(transformations, args.transform)
-        test_transform = getattr(transformations, args.test_transform)
+        transform = getattr(image_transforms, args.transform)
+        test_transform = getattr(image_transforms, args.test_transform)
     except AttributeError:
         raise ValueError('Invalid transformtion selected')
 
@@ -50,7 +50,7 @@ def main():
     )
     
     # init the classification model
-    model = model_builder.TinyVGG(in_channels=3,
+    model = model_builder.TinyVGG(in_channels=1,
                                   hidden_units=args.hidden_units,
                                   out_features=len(classes)).to(device)
     

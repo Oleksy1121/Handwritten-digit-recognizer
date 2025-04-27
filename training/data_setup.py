@@ -12,11 +12,58 @@ Intended for modular deep learning workflows.
 """
 
 import os
+import torch
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
+from PIL import Image
+from typing import Tuple, List, Dict
 from .paths import train_dir, test_dir
 from .image_transforms import simple_transform
+
+
+# def for get class and dictionary
+def get_classes(PATH: int) -> Tuple[List[str], Dict[str, int]]:
+    
+    classes = sorted(entry.name for entry in os.scandir(PATH))
+    if not classes:
+        raise FileNotFoundError(f"Couldn't find classes in {PATH}")
+    
+    class_to_idx = {class_name: i for i, class_name in enumerate(classes)}
+    return classes, class_to_idx
+
+
+# custom class
+class CustomDataSet(torch.utils.data.Dataset):
+    def __init__(self, root, transform):
+        self.root_dir = root,
+        self.transform = transform
+        self.paths = list(root.glob('*/*.png'))
+        self.classes, self.class_to_idx = get_classes(root)
+    
+    def load_image(self, index: int):
+        'Return PIL image'
+        image_path = self.paths[index]
+        img = Image.open(image_path)
+        img = img.convert('RGBA')
+        r, g, b, a = img.split()
+        return a
+    
+    def __len__(self):
+        'Return len of the dataset'
+        return len(self.paths)
+    
+    def __getitem__(self, index: int) -> Tuple[torch.tensor, int]:
+        'Return image and class'
+        img = self.load_image(index)
+        class_name = self.paths[index].parent.name
+        class_idx = self.class_to_idx[class_name]
+        
+        if self.transform:
+            return self.transform(img), class_idx
+        else:
+            return img, class_idx
+
 
 class DataManager():
     """
@@ -49,8 +96,10 @@ class DataManager():
         self.batch_size = None
         self.num_workers = None
 
-        self.train_dataset = ImageFolder(root=self.train_dir, transform=self.transform)
-        self.test_dataset = ImageFolder(root=self.test_dir, transform=self.test_transform)
+        #self.train_dataset = ImageFolder(root=self.train_dir, transform=self.transform)
+        #self.test_dataset = ImageFolder(root=self.test_dir, transform=self.test_transform)
+        self.train_dataset = CustomDataSet(root=self.train_dir, transform=self.transform)
+        self.test_dataset = CustomDataSet(root=self.test_dir, transform=self.test_transform)
         self.classes = self.test_dataset.classes
 
     
