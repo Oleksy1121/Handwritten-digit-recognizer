@@ -40,6 +40,7 @@ class CustomDataSet(torch.utils.data.Dataset):
         self.transform = transform
         self.paths = list(root.glob('*/*.png'))
         self.classes, self.class_to_idx = get_classes(root)
+        self.targets = [self.class_to_idx[x.parent.stem] for x in self.paths]
     
     def load_image(self, index: int):
         'Return PIL image'
