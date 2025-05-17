@@ -8,7 +8,24 @@ import os
 
 
 class DigitPredictService:
+    """
+    Service for digit prediction using a training model.
+
+    Handless loading the model, preprocesing images, running inference
+    and formatting prediction results.
+
+    """
     def __init__(self, model_path: str):
+        """
+        Initializes the digit prediction service by loading the model.
+
+        Args:
+            model_path (str): Path to the trained PyTorch model file.
+
+        Raises:
+            FileNotFoundError: If the model file does not exist at 
+                the specified path.
+        """
         if not os.path.exists(model_path):
             raise FileNotFoundError("Check model weight path")
 
@@ -17,6 +34,23 @@ class DigitPredictService:
         self.model.eval()
 
     def preprocessing_image(self, base64_string: str) -> Image.Image:
+        """
+        Decodes base64 image, conwerts to RGBA, and returns Alpha
+        channel.
+
+        Args:
+            base64_string (str): Base64 encoded image string 
+                received from client.
+
+        Raises:
+            ValueError: If decoding the base64 string or 
+                opening/processing the image fails.
+
+        Returns:
+            Image.Image: The processed image (Alpha channel) as 
+                a PIL Image object.
+        """
+
         try:
             img_bytes = base64.b64decode(base64_string)
             img = Image.open(io.BytesIO(img_bytes))
@@ -28,7 +62,22 @@ class DigitPredictService:
         # alpha_channel.save('images/sample.png')
         return alpha_channel
 
-    def format_pred_result(self, pred_probs: torch.Tensor, y_pred: torch.Tensor):
+
+    def format_pred_result(self, pred_probs: torch.Tensor, 
+                           y_pred: torch.Tensor) -> dict:
+        """
+        Formats prediction probability tensors into a dictionary.
+
+        Args:
+            pred_probs (torch.Tensor): Probability tensor output 
+                from the model (shape [1, 10]).
+            y_pred (torch.Tensor): Predicted class index tensor 
+                output from the model (shape [1]).
+
+        Returns:
+            dict: A dictionary mapping digit indices (0-9) to their 
+                probability and isMax status.
+        """
 
         digit_pred = {}
         for i, prob in enumerate(pred_probs.squeeze().tolist()):
@@ -36,7 +85,21 @@ class DigitPredictService:
 
         return digit_pred
 
-    def predict(self, base64_string: str):
+    def predict(self, base64_string: str) -> dict:
+        """
+        Processes a base64 encoded image and predicts the digit 
+        using the loaded model.
+
+        Orchestrates image preprocessing, tensor transformation, 
+        model inference, and result formatting.
+
+        Args:
+            base64_string (str): Base64 encoded image string.
+
+        Returns:
+            dict: A dictionary mapping digit indices (0-9) to their 
+                probability and isMax status.
+        """
 
         img = self.preprocessing_image(base64_string)
         tensor = simple_transform(img).unsqueeze(dim=0)
