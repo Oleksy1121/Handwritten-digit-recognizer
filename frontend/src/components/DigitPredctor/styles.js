@@ -2,16 +2,15 @@ import styled from 'styled-components'
 
 export const DigitPredictiorContainer = styled.div`
     margin: 50px auto;
-    width: 500px;
-    height: 500px;
+    padding: 20px;
+    width: 800px;
     background: none;
-    border: 1px solid gold;
+    border: 1px solid black;
     border-radius: 20px;
-    box-shadow: 0px 0px 20px gold;
+    box-shadow: 0px 0px 30px black;
 `
 
 export const Header = styled.h1`
     text-align: center;
-    margin-top: 10px;
     color: white;
 `
