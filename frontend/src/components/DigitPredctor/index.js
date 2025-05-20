@@ -6,6 +6,7 @@ import {
     Header,
 } from "./styles"
 import Canvas from "../CanvasDrawing"
+import axios from '../../axios'
 
 function DigitPredictor() {
     const canvasRef = useRef(null)
@@ -18,8 +19,16 @@ function DigitPredictor() {
 
     const getCanvasImage = () => {
       if (canvasRef.current) {
-        canvasRef.current.getImage()
+         return canvasRef.current.getImage()
       }
+    }
+
+    const getPrediction = async () => {
+      const base64_string = getCanvasImage()
+      console.log(base64_string)
+
+      await axios.post('/predict', {'base64_string': base64_string})
+
     }
 
     return (
@@ -29,7 +38,7 @@ function DigitPredictor() {
 
             <ButtonContainer>
                 <Button onClick={handleClearCanvas}>Clear</Button>
-                <Button onClick={getCanvasImage}>Predict</Button>
+                <Button onClick={getPrediction}>Predict</Button>
             </ButtonContainer>
 
         </DigitPredictiorContainer>
