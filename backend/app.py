@@ -28,7 +28,11 @@ class PredictRequest(BaseModel):
 
 
 @app.post("/predict")
-async def handle_predict_request(base64_string: PredictRequest):
+async def handle_predict_request(request_body: PredictRequest):
+
+    base64_string = request_body.base64_string
+    if ',' in base64_string:
+        base64_string = base64_string.split(',')[1]
 
     if predictor_service is None:
         raise HTTPException(
