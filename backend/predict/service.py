@@ -55,7 +55,7 @@ class DigitPredictService:
             img_bytes = base64.b64decode(base64_string)
             img = Image.open(io.BytesIO(img_bytes))
         except:
-            raise ValueError("Error during encodind or opening image")
+            raise ValueError("Error during encoding or opening image")
 
         img = img.convert("RGBA")
         _, _, _, alpha_channel = img.split()
