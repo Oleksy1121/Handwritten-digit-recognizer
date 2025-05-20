@@ -1,19 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { CanvasContainer } from './styles'
+import React, {
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+} from "react"
+import { CanvasContainer } from "./styles"
 
-function Canvas() {
-
-    const canvasRef = useRef(null)
+const Canvas = forwardRef((props, ref) => {
+    const canvasElementRef = useRef(null)
     const contextRef = useRef(null)
     const [isDrawing, setIsDrawing] = useState(false)
 
-    useEffect(() => {   
-        const canvas = canvasRef.current
+    useImperativeHandle(ref, () => ({
+        clear: clearCanvas,
+        getImage: getImageAsBase64,
+    }))
+
+    useEffect(() => {
+        const canvas = canvasElementRef.current
         const displayWidth = canvas.clientWidth
         const displayHeight = canvas.clientHeight
 
-        canvas.width = displayWidth 
-        canvas.height = displayHeight 
+        canvas.width = displayWidth
+        canvas.height = displayHeight
 
         const context = canvas.getContext("2d")
         context.lineCap = "round"
@@ -22,10 +32,8 @@ function Canvas() {
         contextRef.current = context
     }, [])
 
-
-    const startDrawing = ( {nativeEvent} ) => {
-
-        const {offsetX, offsetY} = nativeEvent
+    const startDrawing = ({ nativeEvent }) => {
+        const { offsetX, offsetY } = nativeEvent
         contextRef.current.beginPath()
         contextRef.current.moveTo(offsetX, offsetY)
         setIsDrawing(true)
@@ -34,34 +42,49 @@ function Canvas() {
     const finishDrawing = () => {
         contextRef.current.closePath()
         setIsDrawing(false)
-
     }
 
-    const draw = ( {nativeEvent} ) => {
+    const draw = ({ nativeEvent }) => {
         if (!isDrawing) return null
-        
-        const {offsetX, offsetY} = nativeEvent
+
+        const { offsetX, offsetY } = nativeEvent
         contextRef.current.lineTo(offsetX, offsetY)
         contextRef.current.stroke()
     }
 
     const handleMouseLeave = () => {
-        if(isDrawing) {
+        if (isDrawing) {
             finishDrawing()
         }
     }
 
+    const clearCanvas = () => {
+        const canvas = canvasElementRef.current
+        const context = contextRef.current
+        if (context && canvas) {
+            context.clearRect(0, 0, canvas.width, canvas.height)
+        }
+    }
 
-  return (
-    <CanvasContainer
-        onMouseDown={startDrawing}
-        onMouseUp={finishDrawing}
-        onMouseMove={draw}
-        onMouseLeave={handleMouseLeave}
-        ref={canvasRef}
+    const getImageAsBase64 = (type = "image/png", quality = 1) => {
+        const canvas = canvasElementRef.current
+        if (!canvas) {
+            console.error("Canvas element not found.")
+            return null
+        }
 
-    ></CanvasContainer>
-  )
-}
+        return canvas.toDataURL(type, quality)
+    }
+
+    return (
+        <CanvasContainer
+            onMouseDown={startDrawing}
+            onMouseUp={finishDrawing}
+            onMouseMove={draw}
+            onMouseLeave={handleMouseLeave}
+            ref={canvasElementRef}
+        ></CanvasContainer>
+    )
+})
 
 export default Canvas
