@@ -1,14 +1,22 @@
 import styled from 'styled-components'
 
-export const DigitPredictiorContainer = styled.div`
+
+export const MainContainer = styled.div`
+    display: flex;
     margin: 50px auto;
+    border: 1px black solid;
+    border-radius: 26px;
+    width: 1200px;
+    height: 900px;
+    box-shadow: 0px 0px 30px black;
+    overflow: hidden;
+`
+
+
+export const DigitPredictiorContainer = styled.div`
     padding: 20px;
     width: 800px;
     background: none;
-    border: 1px solid black;
-    border-radius: 20px;
-    box-shadow: 0px 0px 30px black;
-
 `
 
 export const Header = styled.h1`
@@ -21,9 +29,6 @@ export const ButtonContainer = styled.div`
     width: 80%;
     display: flex;
     justify-content: space-between;
-
-    
-
 `
 
 export const Button = styled.button`
