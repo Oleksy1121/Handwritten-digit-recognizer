@@ -15,6 +15,7 @@ class DigitPredictService:
     and formatting prediction results.
 
     """
+
     def __init__(self, model_path: str):
         """
         Initializes the digit prediction service by loading the model.
@@ -23,7 +24,7 @@ class DigitPredictService:
             model_path (str): Path to the trained PyTorch model file.
 
         Raises:
-            FileNotFoundError: If the model file does not exist at 
+            FileNotFoundError: If the model file does not exist at
                 the specified path.
         """
         if not os.path.exists(model_path):
@@ -39,15 +40,15 @@ class DigitPredictService:
         channel.
 
         Args:
-            base64_string (str): Base64 encoded image string 
+            base64_string (str): Base64 encoded image string
                 received from client.
 
         Raises:
-            ValueError: If decoding the base64 string or 
+            ValueError: If decoding the base64 string or
                 opening/processing the image fails.
 
         Returns:
-            Image.Image: The processed image (Alpha channel) as 
+            Image.Image: The processed image (Alpha channel) as
                 a PIL Image object.
         """
 
@@ -62,43 +63,59 @@ class DigitPredictService:
         # alpha_channel.save('images/sample.png')
         return alpha_channel
 
-
-    def format_pred_result(self, pred_probs: torch.Tensor, 
-                           y_pred: torch.Tensor) -> dict:
+    def format_pred_result(
+        self, pred_probs: torch.Tensor, y_pred: torch.Tensor
+    ) -> dict:
         """
         Formats prediction probability tensors into a dictionary.
 
         Args:
-            pred_probs (torch.Tensor): Probability tensor output 
+            pred_probs (torch.Tensor): Probability tensor output
                 from the model (shape [1, 10]).
-            y_pred (torch.Tensor): Predicted class index tensor 
+            y_pred (torch.Tensor): Predicted class index tensor
                 output from the model (shape [1]).
 
         Returns:
-            dict: A dictionary mapping digit indices (0-9) to their 
-                probability and isMax status.
+            dict: A dictionary containing:
+                "predictions": list[dict] - List of {"digit": int,
+                    "probability": float, "isMax": bool} for each digit.
+                "digit": int - The most probable digit.
+                "coefficient": float - The confidence for the most probable digit.
         """
 
-        digit_pred = {}
-        for i, prob in enumerate(pred_probs.squeeze().tolist()):
-            digit_pred[i] = {"prob_value": prob, "isMax": i == y_pred.item()}
+        results_list = []
 
-        return digit_pred
+        probs = pred_probs.squeeze().tolist()
+        pred_digit = y_pred.item()
+
+        for i, prob in enumerate(probs):
+            results_list.append(
+                {"digit": i, "probability": prob, "isMax": i == pred_digit}
+            )
+
+        return {
+            "predictions": results_list,
+            "digit": pred_digit,
+            "coefficient": max(probs),
+        }
 
     def predict(self, base64_string: str) -> dict:
         """
-        Processes a base64 encoded image and predicts the digit 
+        Processes a base64 encoded image and predicts the digit
         using the loaded model.
 
-        Orchestrates image preprocessing, tensor transformation, 
+        Orchestrates image preprocessing, tensor transformation,
         model inference, and result formatting.
 
         Args:
             base64_string (str): Base64 encoded image string.
 
         Returns:
-            dict: A dictionary mapping digit indices (0-9) to their 
-                probability and isMax status.
+            dict: A dictionary containing:
+                "predictions": list[dict] - List of {"digit": int,
+                    "probability": float, "isMax": bool} for each digit.
+                "digit": int - The most probable digit.
+                "coefficient": float - The confidence for the most probable digit.
         """
 
         img = self.preprocessing_image(base64_string)
