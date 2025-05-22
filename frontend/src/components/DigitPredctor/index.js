@@ -30,33 +30,32 @@ function DigitPredictor() {
     const getPrediction = async () => {
         const base64_string = getCanvasImage()
 
+        if (canvasRef.current.isEmpty()) {
+            return null
+        }
+
         try {
             const response = await axios.post("/predict", {
                 base64_string: base64_string,
             })
-            console.log(response.data.predict)
+            //console.log(response.data.predict)
             setResults(response.data.predict)
         } catch (err) {
             console.log(err.message)
         }
     }
 
-
-
-
     return (
-      <MainContainer>
-        <DigitPredictiorContainer>
-
-            <Header>Draw your own digit !</Header>
-            <Canvas ref={canvasRef}></Canvas>
-            <ButtonContainer>
-                <Button onClick={handleClearCanvas}>Clear</Button>
-                <Button onClick={getPrediction}>Predict</Button>
-            </ButtonContainer>
-            
-        </DigitPredictiorContainer>
-        <Results results={results}></Results>
+        <MainContainer>
+            <DigitPredictiorContainer>
+                <Header>Draw your own digit !</Header>
+                <Canvas ref={canvasRef}></Canvas>
+                <ButtonContainer>
+                    <Button onClick={handleClearCanvas}>Clear</Button>
+                    <Button onClick={getPrediction}>Predict</Button>
+                </ButtonContainer>
+            </DigitPredictiorContainer>
+            <Results results={results}></Results>
         </MainContainer>
     )
 }

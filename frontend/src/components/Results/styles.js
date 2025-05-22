@@ -12,12 +12,10 @@ export const ResultsContainer = styled.div`
     align-items: center;
     box-sizing: border-box;
 
-    min-width: 280px;
+    width: 280px;
     padding: 20px;
     border-left: 2px solid yellow;
     background: rgba(0, 0, 0, 0.3);
-
-
 `;
 
 export const PredictionBarContainer = styled.div`
@@ -57,23 +55,22 @@ export const ProgressBarFill = styled.div`
 `
 
 export const ResultTextContainer = styled.div`
-
-    margin-top: 30px;
-    justify-content: center;
+    display: flex;
+    align-items: baseline;
 
 `
 
 export const Text = styled.p`
-    margin: auto;
+    text-align: center;
     font-size: 2.1em;
     font-weight: 600;
-    margin-right: 15px;
     color: gold;
 
-    span{
-        color:red;
-        font-weight: 700;
-        font-size: 2.15em;
-    }
 `
 
+export const DigitText = styled(Text)`
+    color:red;
+    font-weight: 700;
+    font-size: 3em;
+    margin-left: 10px;
+`

@@ -11,10 +11,12 @@ const Canvas = forwardRef((props, ref) => {
     const canvasElementRef = useRef(null)
     const contextRef = useRef(null)
     const [isDrawing, setIsDrawing] = useState(false)
+    const emptyCanvasBase64 = useRef(null)
 
     useImperativeHandle(ref, () => ({
         clear: clearCanvas,
         getImage: getImageAsBase64,
+        isEmpty: isCanvasEmpty,
     }))
 
     useEffect(() => {
@@ -30,6 +32,9 @@ const Canvas = forwardRef((props, ref) => {
         context.strokeStyle = "red"
         context.lineWidth = 5
         contextRef.current = context
+
+        clearCanvas()
+        emptyCanvasBase64.current = getImageAsBase64()
     }, [])
 
     const startDrawing = ({ nativeEvent }) => {
@@ -74,6 +79,11 @@ const Canvas = forwardRef((props, ref) => {
         }
 
         return canvas.toDataURL(type, quality)
+    }
+
+    const isCanvasEmpty = () => {
+        const currentCanvasBase64 = getImageAsBase64()
+        return currentCanvasBase64 === emptyCanvasBase64.current
     }
 
     return (
