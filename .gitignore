@@ -3,3 +3,4 @@
 **/.virtual_documents/
 /training/data/
 /training/models/
+node_modules/
