@@ -4,3 +4,5 @@
 /training/data/
 /training/models/
 node_modules/
+.venv/
+.conda/
