@@ -48,14 +48,56 @@ The deep learning model was trained using PyTorch. The architecture employed is 
 
 A set of modular Python scripts (`engine.py`, `model_builder.py`, `data_setup.py`, `utils.py`, `image_transforms.py`, `paths.py`, `plots.py`, `predictions.py`, `train.py`) was developed to manage the training process, allowing for easy experimentation and expansion.
 
+## 🚀 How to Run the Application
+
+To run the application locally, you will need [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or a Docker engine) installed, and [Miniconda/Anaconda](https://docs.conda.io/en/latest/miniconda.html) for the `training` module.
+
+Navigate to the root directory of the project (where `docker-compose.yml` is located).
+
+### 1. Running Backend and Frontend (Docker)
+
+The backend and frontend services are containerized, ensuring consistent environments and easy deployment.
+
+```bash
+docker compose up -d --build
+```
+
+* `docker compose up`: Starts the services defined in `docker-compose.yml`.
+* `-d`: Runs the containers in detached mode (in the background).
+* `--build`: Forces a rebuild of the Docker images for the services (`backend`, `frontend`) before starting them. This is crucial for the initial run or after any changes to the code or Docker configuration.
+
+**Important note on image size**: The Docker image for the backend service can be substantial (initially around 11-12 GB, but optimized to typically 1-3 GB after applying best practices), primarily due to the PyTorch library. Ensure you have sufficient free disk space.
+
+Once the containers are running:
+
+* The Backend API will be accessible at: http://localhost:8000
+* The Frontend Application will be accessible at: http://localhost:3000
+
+
+### 2. Stopping the Application
+To stop the running Docker containers execute:
+
+```Bash
+docker compose down
+```
+This command will stop and remove the containers created by `docker compose up`.
+
+
+### 3. Setting up and Running the Training Module (training/)
+The `training/` module requires a separate Conda environment to manage its PyTorch and other ML dependencies.
+
+1. Install Conda: If you haven't already, download and install Miniconda.
+2. Navigate to the `training` directory:
+
+``` bash
+conda env create -f environment.yml
+conda activate hand-digit-training
+```
 
 ## 🎯 Further Steps & Future Improvements
 
 This project serves as a robust foundation for a hand-digit recognition application. Here are some potential areas for future development and improvements:
 
-- **Dockerization:**
-    
-    - Containerize the backend and frontend components using Docker. This would streamline the deployment process, ensure consistent environments, and facilitate easier scaling and management.
 - **Model Performance Enhancement:**
     
     - While the model exhibits excellent test results during training, its performance in the live application environment (with user-drawn digits) could be improved. This discrepancy suggests potential issues with data augmentation during inference, preprocessing of user input, or domain shift.

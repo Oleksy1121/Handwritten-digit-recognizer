@@ -14,7 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL_PATH = "models/best.pt"
+MODEL_PATH = "backend/models/best.pt"
 
 try:
     predictor_service = DigitPredictService(MODEL_PATH)
