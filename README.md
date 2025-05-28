@@ -9,6 +9,10 @@ The "Hand-Digit Recognizer App" is a full-stack web application designed to allo
 - **Result Display:** Prediction results are clearly presented to the user, including the model's confidence for each possible digit.
 - **Modular Codebase:** Both the backend and the training module are designed with modularity in mind, facilitating easy extension and maintenance.
 
+## 🚀 App Preview
+
+[Hand-Digit Recognizer Demo](attachments\app_demo.gif)
+
 ## 📦 Project Structure
 
 The project is structured into three main components:
