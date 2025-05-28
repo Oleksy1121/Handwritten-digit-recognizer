@@ -8,8 +8,8 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 from typing import List
-from .paths import models_dir, results_filename, train_dir
-from .predictions import predict
+from paths import models_dir, results_filename, train_dir
+from predictions import predict
 import seaborn as sns
 
 
@@ -35,7 +35,13 @@ def plot_random_images(path: str = train_dir, n: int = 10, show_shape: bool = Fa
     cols = 5 if n > 19 else 4 if n > 10 else 3 if n > 4 else 2 if n > 1 else 1
     rows = int(np.ceil(n/cols))
     
-    list_of_img_paths = list(Path(path).glob(f'*/*.{img_format}'))
+    list_of_img_paths = list(Path(path).glob(f'**/*.{img_format}'))
+    if not list_of_img_paths:
+        print('No images to plots. Check image path.')
+        print(Path(path))
+        return
+
+
     random_img_path = random.sample(list_of_img_paths, rows*cols)
     
     fig, ax = plt.subplots(nrows=rows, ncols=cols)

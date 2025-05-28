@@ -8,7 +8,7 @@ import torch
 import os
 import pandas as pd
 from typing import Dict, List
-from .paths import models_dir, model_dir_prefix
+from paths import models_dir, model_dir_prefix
 
 def create_model_directory(MODELS_PATH: str = models_dir, PREFIX: str = model_dir_prefix):
     """

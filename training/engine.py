@@ -12,7 +12,7 @@ Provides:
 
 import torch
 from typing import Dict, List
-from .utils import save_model
+from utils import save_model
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
