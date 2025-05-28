@@ -6,7 +6,7 @@ Main script to train a TinyVGG model on a custom dataset using PyTorch.
 
 import torch
 from time import time
-from . import data_setup, model_builder, engine, image_transforms, utils, paths
+import data_setup, model_builder, engine, image_transforms, utils, paths
 import argparse
 
 def main():
@@ -17,11 +17,9 @@ def main():
     parser.add_argument('-b', '--batch_size', type=int, default=32, help='Batch size for training.')
     parser.add_argument('-lr', '--learning_rate', type=float, default=0.001, help='Learning rate for optimizer.')
     parser.add_argument('-hu', '--hidden_units', type=int, default=10, help='Number of hidden units in TinyVGG.')
-    parser.add_argument('-n', '--num_workers', type=int, default=1, help='Number of CPU cores for data loading.')
-    parser.add_argument('-t', '--transform', type=str, default='simple_transform', help='Type of train data transform',
-                       choices=['simple_transform', 'trivial_transform', 'auto_augment_transform'])
-    parser.add_argument('-tt', '--test_transform', type=str, default='simple_transform', help='Type of test data transform',
-                       choices=['simple_transform', 'trivial_transform', 'auto_augment_transform'])
+    parser.add_argument('-n', '--num_workers', type=int, default=0, help='Number of CPU cores for data loading.')
+    parser.add_argument('-t', '--transform', type=str, default='simple_transform', help='Type of train data transform')
+    parser.add_argument('-tt', '--test_transform', type=str, default='defaut', help='Type of test data transform')
     args = parser.parse_args()
 
     # set train and test directiries
@@ -34,7 +32,10 @@ def main():
     # define transformation
     try:
         transform = getattr(image_transforms, args.transform)
-        test_transform = getattr(image_transforms, args.test_transform)
+        if args.test_transform == 'defaut':
+            test_transform = transform
+        else:
+             test_transform = getattr(image_transforms, args.test_transform)
     except AttributeError:
         raise ValueError('Invalid transformtion selected')
 

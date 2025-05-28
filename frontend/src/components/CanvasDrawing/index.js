@@ -30,7 +30,7 @@ const Canvas = forwardRef((props, ref) => {
         const context = canvas.getContext("2d")
         context.lineCap = "round"
         context.strokeStyle = "red"
-        context.lineWidth = 5
+        context.lineWidth = 15
         contextRef.current = context
 
         clearCanvas()

@@ -18,8 +18,8 @@ from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 from PIL import Image
 from typing import Tuple, List, Dict
-from .paths import train_dir, test_dir
-from .image_transforms import simple_transform
+from paths import train_dir, test_dir
+from image_transforms import simple_transform
 
 
 # def for get class and dictionary
