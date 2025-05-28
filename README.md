@@ -11,7 +11,7 @@ The "Hand-Digit Recognizer App" is a full-stack web application designed to allo
 
 ## 🚀 App Preview
 
-[Hand-Digit Recognizer Demo](attachments\app_demo.gif)
+![Hand-Digit Recognizer Demo](attachments\app_demo.gif)
 
 ## 📦 Project Structure
 
