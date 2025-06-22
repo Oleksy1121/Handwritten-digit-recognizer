@@ -98,10 +98,6 @@ conda env create -f environment.yml
 conda activate hand-digit-training
 ```
 
-## 🎯 Further Steps & Future Improvements
-
-This project serves as a robust foundation for a hand-digit recognition application. Here are some potential areas for future development and improvements:
-
-- **Model Performance Enhancement:**
+## ✅ Model Performance & Conclusion
     
-    - While the model exhibits excellent test results during training, its performance in the live application environment (with user-drawn digits) could be improved. This discrepancy suggests potential issues with data augmentation during inference, preprocessing of user input, or domain shift.
+While the model initially showed good test results on the Kaggle dataset, its performance in the production environment was suboptimal. Consequently, the model was retrained using a new dataset collected directly from the production environment to enhance its accuracy. As a result, the model achieved a satisfactory accuracy of 84%, marking the project as complete and successful.
