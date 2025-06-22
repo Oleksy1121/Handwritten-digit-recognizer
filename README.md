@@ -70,7 +70,7 @@ docker compose up -d --build
 * `-d`: Runs the containers in detached mode (in the background).
 * `--build`: Forces a rebuild of the Docker images for the services (`backend`, `frontend`) before starting them. This is crucial for the initial run or after any changes to the code or Docker configuration.
 
-**Important note on image size**: The Docker image for the backend service can be substantial (initially around 11-12 GB, but optimized to typically 1-3 GB after applying best practices), primarily due to the PyTorch library. Ensure you have sufficient free disk space.
+**Important note on image size**: The Docker image for the backend service is sizable, weighing around 3 GB, mainly due to the PyTorch library. Ensure you have sufficient free disk space.
 
 Once the containers are running:
 
