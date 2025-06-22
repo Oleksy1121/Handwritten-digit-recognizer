@@ -7,9 +7,9 @@ from glob import glob
 
 #%%
 
-RAW_DATA_PATH = os.path.normpath('training/data/dataset')
+RAW_DATA_PATH = os.path.normpath('training/data/prod_dataset')
 DATA_PATH = os.path.normpath('training/data')
-DATA_DIR_NAME = 'digit'
+DATA_DIR_NAME = 'prod_digit'
 
 TEST_SIZE = 0.2
 
@@ -95,7 +95,7 @@ for img_class in tqdm(os.listdir(RAW_DATA_PATH)):
     
     # Get the imges paths into list and shuffle
     img_class_path = os.path.join(RAW_DATA_PATH, img_class)
-    img_path_list = glob(os.path.join(img_class_path, '**', '*.png'))
+    img_path_list = glob(os.path.join(img_class_path, '*.png'))
 
     # Prepare test and train image paths list
     train_img_paths, test_img_paths = train_test_split(img_path_list, test_size=TEST_SIZE, shuffle=True)

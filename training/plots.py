@@ -11,6 +11,7 @@ from typing import List
 from paths import models_dir, results_filename, train_dir
 from predictions import predict
 import seaborn as sns
+import os
 
 
 def plot_random_images(path: str = train_dir, n: int = 10, show_shape: bool = False, 
@@ -267,3 +268,39 @@ def plot_confussion_matrix(model: torch.nn.Module,
     plt.title(title)
     plt.xlabel('Prediction')
     plt.ylabel('True')
+
+
+def plot_model_results(path: str):
+    """
+    Displays plots of model loss and accuracy over epochs based on a CSV file.
+
+    Args:
+        path (str): Path to the CSV file containing columns 'train_loss', 'test_loss', 'train_accuracy', and 'test_accuracy'.
+    """
+
+    if not os.path.exists(path):
+        print(f'File {path}, not exist')
+        return
+
+    results = pd.read_csv(path)
+
+    fig = plt.figure(figsize=(10, 5))
+
+    plt.subplot(1, 2, 1)
+    plt.plot(range(len(results)), results['train_loss'], label='train')
+    plt.plot(range(len(results)), results['test_loss'], label='test')
+    plt.xlabel('Epochs')
+    plt.ylabel("Loss")
+    plt.legend()
+    plt.title('Model Loss')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(range(len(results)), results['train_accuracy'], label='train')
+    plt.plot(range(len(results)), results['test_accuracy'], label='test')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.title('Model Accuracy')
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()

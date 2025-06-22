@@ -54,7 +54,7 @@ class TinyVGG(nn.Module):
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(in_features=hidden_units*4*4,
+            nn.Linear(in_features=hidden_units*13*13,
                       out_features=out_features))
 
     def forward(self, x):
