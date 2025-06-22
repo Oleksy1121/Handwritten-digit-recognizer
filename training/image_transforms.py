@@ -49,3 +49,11 @@ auto_augment_transform = transforms.Compose([
     transforms.AutoAugment(),
     transforms.ToTensor()
     ])
+
+
+mix_transform = transforms.Compose([
+    transforms.Resize((64, 64)),
+    transforms.RandomResizedCrop(size=(64, 64), scale=(0.7, 1.05)),
+    transforms.RandomRotation(degrees=(-20, 20)),
+    transforms.ToTensor()
+    ])

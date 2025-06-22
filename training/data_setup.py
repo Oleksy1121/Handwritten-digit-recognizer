@@ -46,9 +46,9 @@ class CustomDataSet(torch.utils.data.Dataset):
         'Return PIL image'
         image_path = self.paths[index]
         img = Image.open(image_path)
-        img = img.convert('RGBA')
-        r, g, b, a = img.split()
-        return a
+        #img = img.convert('RGBA')
+        #r, g, b, a = img.split()
+        return img
     
     def __len__(self):
         'Return len of the dataset'
