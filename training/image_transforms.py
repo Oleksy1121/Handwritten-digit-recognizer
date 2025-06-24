@@ -10,7 +10,8 @@ import torch
 
 simple_transform = transforms.Compose([
     transforms.Resize((64, 64)),
-    transforms.ToTensor()
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.5], std=[0.5])
 ])
 
 transform_28x28 = transforms.Compose([

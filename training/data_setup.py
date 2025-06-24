@@ -23,7 +23,7 @@ from image_transforms import simple_transform
 
 
 # def for get class and dictionary
-def get_classes(PATH: int) -> Tuple[List[str], Dict[str, int]]:
+def get_classes(PATH: str) -> Tuple[List[str], Dict[str, int]]:
     
     classes = sorted(entry.name for entry in os.scandir(PATH))
     if not classes:
@@ -47,7 +47,7 @@ class CustomDataSet(torch.utils.data.Dataset):
         image_path = self.paths[index]
         img = Image.open(image_path)
         #img = img.convert('RGBA')
-        #r, g, b, a = img.split()
+        #r, g, b, img = img.split()
         return img
     
     def __len__(self):
@@ -63,7 +63,7 @@ class CustomDataSet(torch.utils.data.Dataset):
         if self.transform:
             return self.transform(img), class_idx
         else:
-            return img, class_idx
+            return transforms.ToTensor()(img), class_idx
 
 
 class DataManager():

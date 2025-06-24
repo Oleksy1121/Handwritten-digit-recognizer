@@ -9,6 +9,9 @@ import os
 import pandas as pd
 from typing import Dict, List
 from paths import models_dir, model_dir_prefix
+import argparse
+import json
+from pathlib import Path
 
 def create_model_directory(MODELS_PATH: str = models_dir, PREFIX: str = model_dir_prefix):
     """
@@ -89,3 +92,30 @@ def save_results_to_csv(model_results: Dict[str, List[float]],
         print(f'Saved model results to: "{file_path}"')
     except Exception as e:
         print(f"An error occurred while saving results: {e}")
+
+
+def save_parameters_to_json(args: argparse.Namespace, model_dir_path: str, 
+                            train_dir: str, test_dir: str,
+                            filename: str = 'parameters.json'):
+    """
+    Saves the training parameters from argparse.Namespace and data directories to a JSON file.
+
+    Args:
+        args (argparse.Namespace): The parsed arguments containing model parameters.
+        model_dir_path (str): The directory where the model results are saved.
+        train_dir (str): Path to the training data directory.
+        test_dir (str): Path to the test data directory.
+        filename (str): The name of the JSON file.
+    """
+
+    parameters_dict = vars(args) 
+    parameters_dict['train_data_directory'] = str(train_dir)
+    parameters_dict['test_data_directory'] = str(test_dir)
+
+    model_dir_path = Path(model_dir_path)
+    model_dir_path.mkdir(parents=True, exist_ok=True)
+    file_path = model_dir_path / filename
+    
+    with open(file_path, 'w') as f:
+        json.dump(parameters_dict, f, indent=4) 
+    print(f"Parameters saved to: {file_path}")

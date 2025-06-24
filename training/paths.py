@@ -3,8 +3,8 @@ from pathlib import Path
 data_dir = Path('data')
 images_dir = data_dir / 'prod_digit'
 
-train_dir = images_dir / "train"
-test_dir = images_dir / "test"
+train_dir = Path(images_dir / "train")
+test_dir = Path(images_dir / "test")
 
 models_dir = 'models'
 model_dir_prefix = 'model_'

@@ -59,3 +59,22 @@ class TinyVGG(nn.Module):
 
     def forward(self, x):
         return self.classifier(self.layer_stack_2(self.layer_stack_1(x)))      
+
+
+class NonLinearModel(nn.Module):
+
+    def __init__(self, in_features, out_features, hidden_units):
+        super().__init__()
+
+        self.layer_stack = nn.Sequential(
+            nn.Flatten(),
+            nn.ReLU(),
+            nn.Linear(in_features=in_features, out_features=hidden_units),
+            # nn.ReLU(),
+            # nn.Linear(in_features=hidden_units, out_features=hidden_units),
+            # nn.ReLU(),
+            nn.Linear(in_features=hidden_units, out_features=out_features),
+        )
+
+    def forward(self, x):
+        return self.layer_stack(x)
